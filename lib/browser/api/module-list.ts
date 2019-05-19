@@ -1,9 +1,7 @@
-'use strict'
-
 const features = process.electronBinding('features')
 
 // Browser side modules, please sort alphabetically.
-module.exports = [
+export = [
   { name: 'app', file: 'app' },
   { name: 'autoUpdater', file: 'auto-updater' },
   { name: 'BrowserView', file: 'browser-view' },

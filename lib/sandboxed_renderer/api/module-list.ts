@@ -1,8 +1,6 @@
-'use strict'
-
 const features = process.electronBinding('features')
 
-module.exports = [
+export = [
   {
     name: 'crashReporter',
     load: () => require('@electron/internal/renderer/api/crash-reporter')

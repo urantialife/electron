@@ -112,18 +112,18 @@ auto_filenames = {
   ]
 
   sandbox_browserify_deps = [
-    "lib/browser/api/module-list.js",
+    "lib/browser/api/module-list.ts",
     "lib/common/api/deprecate.ts",
-    "lib/common/api/is-promise.js",
-    "lib/common/api/module-list.js",
-    "lib/common/api/native-image.js",
+    "lib/common/api/is-promise.ts",
+    "lib/common/api/module-list.ts",
+    "lib/common/api/native-image.ts",
     "lib/common/buffer-utils.js",
     "lib/common/crash-reporter.js",
     "lib/common/electron-binding-setup.ts",
-    "lib/common/error-utils.js",
-    "lib/common/web-view-methods.js",
+    "lib/common/error-utils.ts",
+    "lib/common/web-view-methods.ts",
     "lib/renderer/api/crash-reporter.js",
-    "lib/renderer/api/desktop-capturer.js",
+    "lib/renderer/api/desktop-capturer.ts",
     "lib/renderer/api/ipc-renderer.js",
     "lib/renderer/api/remote.js",
     "lib/renderer/api/web-frame.ts",
@@ -145,7 +145,7 @@ auto_filenames = {
     "lib/renderer/web-view/web-view-impl.ts",
     "lib/renderer/web-view/web-view-init.ts",
     "lib/sandboxed_renderer/api/exports/electron.js",
-    "lib/sandboxed_renderer/api/module-list.js",
+    "lib/sandboxed_renderer/api/module-list.ts",
     "lib/sandboxed_renderer/init.js",
     "tsconfig.json",
     "tsconfig.electron.json",
@@ -165,7 +165,7 @@ auto_filenames = {
 
   context_script_browserify_deps = [
     "lib/common/electron-binding-setup.ts",
-    "lib/common/error-utils.js",
+    "lib/common/error-utils.ts",
     "lib/content_script/init.js",
     "lib/renderer/chrome-api.ts",
     "lib/renderer/extensions/event.js",

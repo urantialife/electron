@@ -1,7 +1,5 @@
-'use strict'
-
 // Common modules, please sort alphabetically
-module.exports = [
+export = [
   { name: 'clipboard', file: 'clipboard' },
   { name: 'nativeImage', file: 'native-image' },
   { name: 'shell', file: 'shell' },

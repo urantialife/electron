@@ -16,6 +16,38 @@ declare namespace NodeJS {
     setHiddenValue<T>(obj: any, key: string, value: T): void;
     requestGarbageCollectionForTesting(): void;
   }
+
+  interface NativeImageBinding {
+    nativeImage: typeof Electron.NativeImage;
+    NativeImage: typeof Electron.NativeImage;
+  }
+
+  interface NotificationBinding {
+    isSupported(): boolean;
+    Notification: typeof Electron.Notification;
+  }
+
+  interface PowerMonitor {
+    createPowerMonitor(): Electron.PowerMonitor;
+    PowerMonitor: Function;
+  }
+
+  interface ScreenBinding {
+    createScreen(): Electron.Screen;
+    Screen: Function;
+  }
+
+  interface SessionBinding {
+    fromPartition: typeof Electron.Session.fromPartition;
+    Cookies: Function;
+    Session: Function;
+  }
+
+  interface SystemPreferencesBinding {
+    systemPreferences: Electron.SystemPreferences;
+    SystemPreferences: Function;
+  }
+
   interface Process {
     /**
      * DO NOT USE DIRECTLY, USE process.electronBinding
@@ -25,7 +57,21 @@ declare namespace NodeJS {
     electronBinding(name: 'features'): FeaturesBinding;
     electronBinding(name: 'v8_util'): V8UtilBinding;
     electronBinding(name: 'app'): { app: Electron.App, App: Function };
+    electronBinding(name: 'browser_view'): { BrowserView: typeof Electron.BrowserView };
     electronBinding(name: 'command_line'): Electron.CommandLine;
+    electronBinding(name: 'content_tracing'): Electron.ContentTracing;
+    electronBinding(name: 'global_shortcut'): { globalShortcut: Electron.GlobalShortcut };
+    electronBinding(name: 'native_image'): NativeImageBinding;
+    electronBinding(name: 'notification'): NotificationBinding;
+    electronBinding(name: 'power_monitor'): PowerMonitor;
+    electronBinding(name: 'power_save_blocker'): { powerSaveBlocker: Electron.PowerSaveBlocker };
+    electronBinding(name: 'screen'): ScreenBinding;
+    electronBinding(name: 'shell'): Electron.Shell;
+    electronBinding(name: 'session'): SessionBinding;
+    electronBinding(name: 'system_preferences'): SystemPreferencesBinding;
+    electronBinding(name: 'tray'): { Tray: Function };
+
+    isRemoteModuleEnabled: boolean;
     log: NodeJS.WriteStream['write'];
     activateUvLoop(): void;
 
@@ -116,4 +162,18 @@ interface ResizeObserverEntry {
    * Element's content rect when ResizeObserverCallback is invoked.
    */
   readonly contentRect: DOMRectReadOnly;
+}
+
+interface ObjectConstructor {
+  /**
+   * Returns an object created by key-value entries for properties and methods
+   * @param entries An iterable object that contains key-value entries for properties and methods.
+   */
+  fromEntries<T = any>(entries: Iterable<readonly [PropertyKey, T]>): { [k in PropertyKey]: T };
+
+  /**
+   * Returns an object created by key-value entries for properties and methods
+   * @param entries An iterable object that contains key-value entries for properties and methods.
+   */
+  fromEntries(entries: Iterable<readonly any[]>): any;
 }

@@ -255,7 +255,7 @@ typescript_build("lib_js") {
   if (enable_desktop_capturer) {
     sources += [
       "lib/browser/desktop-capturer.js",
-      "lib/renderer/api/desktop-capturer.js",
+      "lib/renderer/api/desktop-capturer.ts",
     ]
   }
   if (enable_view_api) {

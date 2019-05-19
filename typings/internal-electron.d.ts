@@ -19,6 +19,15 @@ declare namespace Electron {
     setAppPath(path: string | null): void;
   }
 
+  interface PowerMonitor {
+    blockShutdown(): void;
+    unblockShutdown(): void;
+  }
+
+  interface WebContents {
+    equal(webContents: WebContents): boolean;
+  }
+
   interface SerializedError {
     message: string;
     stack?: string,
@@ -86,6 +95,14 @@ declare namespace ElectronInternal {
 
     // convertPromiseValue: Temporarily disabled until it's used
     promisifyMultiArg<T extends (...args: any[]) => any>(fn: T, /*convertPromiseValue: (v: any) => any*/): T;
+  }
+
+  interface SourcePayload {
+    id: string;
+    name: string;
+    thumbnail: string;
+    display_id: number;
+    appIcon: string;
   }
 
   // Internal IPC has _replyInternal and NO reply method

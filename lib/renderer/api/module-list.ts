@@ -7,7 +7,7 @@ const enableRemoteModule = v8Util.getHiddenValue(global, 'enableRemoteModule')
 
 // Renderer side modules, please sort alphabetically.
 // A module is `enabled` if there is no explicit condition defined.
-module.exports = [
+export = [
   { name: 'crashReporter', file: 'crash-reporter', enabled: true },
   {
     name: 'desktopCapturer',
