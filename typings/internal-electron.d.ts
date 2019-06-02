@@ -88,6 +88,21 @@ declare namespace ElectronInternal {
     promisifyMultiArg<T extends (...args: any[]) => any>(fn: T, /*convertPromiseValue: (v: any) => any*/): T;
   }
 
+  interface GetSourcesOptions {
+    captureWindow: boolean;
+    captureScreen: boolean;
+    thumbnailSize: Electron.Size;
+    fetchWindowIcons: boolean;
+  }
+
+  interface GetSourcesResult {
+    id: string;
+    name: string;
+    thumbnail: string;
+    display_id: string;
+    appIcon: string | null;
+  }
+
   // Internal IPC has _replyInternal and NO reply method
   interface IpcMainInternalEvent extends Omit<Electron.IpcMainEvent, 'reply'> {
     _replyInternal(...args: any[]): void;

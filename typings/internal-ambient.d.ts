@@ -18,6 +18,12 @@ declare namespace NodeJS {
     setHiddenValue<T>(obj: any, key: string, value: T): void;
     requestGarbageCollectionForTesting(): void;
   }
+
+  interface DesktopCapturerBinding {
+    startHandling(captureWindow: boolean, captureScreen: boolean, thumbnailSize: Electron.Size, fetchWindowIcons: boolean): void;
+    emit: typeof NodeJS.EventEmitter.prototype.emit;
+  }
+
   interface Process {
     /**
      * DO NOT USE DIRECTLY, USE process.electronBinding
@@ -28,6 +34,7 @@ declare namespace NodeJS {
     electronBinding(name: 'v8_util'): V8UtilBinding;
     electronBinding(name: 'app'): { app: Electron.App, App: Function };
     electronBinding(name: 'command_line'): Electron.CommandLine;
+    electronBinding(name: 'desktop_capturer'): { createDesktopCapturer(): DesktopCapturerBinding };
     log: NodeJS.WriteStream['write'];
     activateUvLoop(): void;
 
