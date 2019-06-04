@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+const { expect } = require('chai')
 const { GitProcess } = require('dugite')
 const childProcess = require('child_process')
 const fs = require('fs')
@@ -136,12 +137,54 @@ const LINTERS = [ {
       process.exit(1)
     }
   }
+}, {
+  key: 'patches',
+  roots: ['patches'],
+  test: () => true,
+  run: () => {
+    const patchesDir = path.resolve(__dirname, '../patches')
+    for (const patchTarget of fs.readdirSync(patchesDir)) {
+      const targetDir = path.resolve(patchesDir, patchTarget)
+      // If the config does not exist that is OK, we just skip this dir
+      const targetConfig = path.resolve(targetDir, 'config.json')
+      if (!fs.existsSync(targetConfig)) continue
+
+      const config = JSON.parse(fs.readFileSync(targetConfig, 'utf8'))
+      for (const key of Object.keys(config)) {
+        // The directory the config points to should exist
+        const targetPatchesDir = path.resolve(__dirname, '../../..', key)
+        expect(fs.existsSync(targetPatchesDir)).to.equal(true, `target patch directory: "${targetPatchesDir}" should exist`)
+        // We need a .patches file
+        const dotPatchesPath = path.resolve(targetPatchesDir, '.patches')
+        expect(fs.existsSync(dotPatchesPath)).to.equal(true, `.patches file: "${dotPatchesPath}" should exist`)
+
+        // Read the patch list
+        const patchFileList = fs.readFileSync(dotPatchesPath, 'utf8').trim().split('\n')
+        const patchFileSet = new Set(patchFileList)
+        expect(patchFileList).to.have.length(patchFileSet.size, 'each patch file should only be in the .patches file once')
+        for (const file of fs.readdirSync(targetPatchesDir)) {
+          // Ignore the .patches file and READMEs
+          if (file === '.patches' || file === 'README.md') continue
+
+          if (!patchFileSet.has(file)) {
+            throw new Error(`Expected the .patches file at "${dotPatchesPath}" to contain a patch file ("${file}") present in the directory but it did not`)
+          }
+          patchFileSet.delete(file)
+        }
+
+        // If anything is left in this set, it means it did not exist on disk
+        if (patchFileSet.size > 0) {
+          throw new Error(`Expected all the patch files listed in the .patches file at "${dotPatchesPath}" to exist but some did not:\n${JSON.stringify([...patchFileSet.values()], null, 2)}`)
+        }
+      }
+    }
+  }
 }]
 
 function parseCommandLine () {
   let help
   const opts = minimist(process.argv.slice(2), {
-    boolean: [ 'c++', 'objc', 'javascript', 'python', 'gn', 'help', 'changed', 'fix', 'verbose', 'only' ],
+    boolean: [ 'c++', 'objc', 'javascript', 'python', 'gn', 'patches', 'help', 'changed', 'fix', 'verbose', 'only' ],
     alias: { 'c++': ['cc', 'cpp', 'cxx'], javascript: ['js', 'es'], python: 'py', changed: 'c', help: 'h', verbose: 'v' },
     unknown: arg => { help = true }
   })
@@ -224,8 +267,8 @@ async function main () {
   const opts = parseCommandLine()
 
   // no mode specified? run 'em all
-  if (!opts['c++'] && !opts.javascript && !opts.python && !opts.gn) {
-    opts['c++'] = opts.javascript = opts.python = opts.gn = true
+  if (!opts['c++'] && !opts.javascript && !opts.python && !opts.gn && !opts.patches) {
+    opts['c++'] = opts.javascript = opts.python = opts.gn = opts.patches = true
   }
 
   const linters = LINTERS.filter(x => opts[x.key])
