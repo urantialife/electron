@@ -82,13 +82,15 @@ class FileSelectHelper : public base::RefCounted<FileSelectHelper>,
  private:
   friend class base::RefCounted<FileSelectHelper>;
 
+  std::unique_ptr<net::DirectoryLister> lister_;
+
   ~FileSelectHelper() override {}
 
   void EnumerateDirectory(base::FilePath base_dir) {
-    auto* lister = new net::DirectoryLister(
+    lister_.reset(new net::DirectoryLister(
         base_dir, net::DirectoryLister::NO_SORT_RECURSIVE,
-        new atom::DirectoryListerHelper(base_dir, this));
-    lister->Start();
+        new atom::DirectoryListerHelper(base_dir, this)));
+    lister_->Start();
     // It is difficult for callers to know how long to keep a reference to
     // this instance.  We AddRef() here to keep the instance alive after we
     // return to the caller.  Once the directory lister is complete we
@@ -117,9 +119,10 @@ class FileSelectHelper : public base::RefCounted<FileSelectHelper>,
           base_dir = paths[0];
 
           // Actually enumerate soemwhere off-thread
-          base::SequencedTaskRunnerHandle::Get()->PostTask(
-              FROM_HERE, base::BindOnce(&FileSelectHelper::EnumerateDirectory,
-                                        this, base_dir));
+          base::PostTaskWithTraits(
+              FROM_HERE, {content::BrowserThread::IO},
+              base::BindOnce(&FileSelectHelper::EnumerateDirectory, this,
+                             base_dir));
         } else {
           for (auto& path : paths) {
             file_info.push_back(FileChooserFileInfo::NewNativeFile(
@@ -182,7 +185,10 @@ class FileSelectHelper : public base::RefCounted<FileSelectHelper>,
   }
 
   // content::WebContentsObserver:
-  void WebContentsDestroyed() override { render_frame_host_ = nullptr; }
+  void WebContentsDestroyed() override {
+    render_frame_host_ = nullptr;
+    Release();
+  }
 
   content::RenderFrameHost* render_frame_host_;
   std::unique_ptr<content::FileSelectListener> listener_;
@@ -275,7 +281,7 @@ void DirectoryListerHelper::OnListFile(
 }
 void DirectoryListerHelper::OnListDone(int error) {
   std::vector<FileChooserFileInfoPtr> file_info;
-  for (auto path : paths_)
+  for (auto& path : paths_)
     file_info.push_back(FileChooserFileInfo::NewNativeFile(
         blink::mojom::NativeFileInfo::New(path, base::string16())));
 
