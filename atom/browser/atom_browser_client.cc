@@ -325,6 +325,10 @@ void AtomBrowserClient::ConsiderSiteInstanceForAffinity(
   }
 }
 
+bool AtomBrowserClient::isRendererSubFrame(int process_id) const {
+  return base::ContainsKey(renderer_is_subframe_, process_id);
+}
+
 void AtomBrowserClient::RenderProcessWillLaunch(
     content::RenderProcessHost* host,
     service_manager::mojom::ServiceRequest* service_request) {
@@ -461,6 +465,11 @@ void AtomBrowserClient::RegisterPendingSiteInstance(
   auto* web_contents = content::WebContents::FromRenderFrameHost(rfh);
   auto* pending_process = pending_site_instance->GetProcess();
   pending_processes_[pending_process->GetID()] = web_contents;
+
+  if (rfh->GetParent())
+    renderer_is_subframe_.insert(pending_process->GetID());
+  else
+    renderer_is_subframe_.erase(pending_process->GetID());
 }
 
 void AtomBrowserClient::AppendExtraCommandLineSwitches(
@@ -511,7 +520,8 @@ void AtomBrowserClient::AppendExtraCommandLineSwitches(
     }
     auto* web_preferences = WebContentsPreferences::From(web_contents);
     if (web_preferences)
-      web_preferences->AppendCommandLineSwitches(command_line);
+      web_preferences->AppendCommandLineSwitches(
+          command_line, isRendererSubFrame(process_id));
     SessionPreferences::AppendExtraCommandLineSwitches(
         web_contents->GetBrowserContext(), command_line);
     if (CanUseCustomSiteInstance()) {
@@ -757,6 +767,7 @@ void AtomBrowserClient::RenderProcessHostDestroyed(
     content::RenderProcessHost* host) {
   int process_id = host->GetID();
   pending_processes_.erase(process_id);
+  renderer_is_subframe_.erase(process_id);
   RemoveProcessPreferences(process_id);
 }
 
