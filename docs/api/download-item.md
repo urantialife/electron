@@ -190,7 +190,7 @@ Returns `String` - ETag header value.
 Returns `Double` - Number of seconds since the UNIX epoch when the download was
 started.
 
-### Properties
+### Instance Properties
 
 #### `downloadItem.saveDialogProperties`
 
