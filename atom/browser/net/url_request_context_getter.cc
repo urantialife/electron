@@ -100,8 +100,10 @@ void SetupAtomURLRequestJobFactory(
 
 #if !BUILDFLAG(DISABLE_FTP_SUPPORT)
   auto* host_resolver = url_request_context->host_resolver();
+  auto* ftp_auth_cache = url_request_context->ftp_auth_cache();
   job_factory->SetProtocolHandler(
-      url::kFtpScheme, net::FtpProtocolHandler::Create(host_resolver));
+      url::kFtpScheme,
+      net::FtpProtocolHandler::Create(host_resolver, ftp_auth_cache));
 #endif
 }
 
