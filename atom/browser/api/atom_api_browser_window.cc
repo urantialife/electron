@@ -94,11 +94,12 @@ BrowserWindow::BrowserWindow(v8::Isolate* isolate,
 }
 
 BrowserWindow::~BrowserWindow() {
-  api_web_contents_->RemoveObserver(this);
   // Note that the OnWindowClosed will not be called after the destructor runs,
   // since the window object is managed by the TopLevelWindow class.
-  if (web_contents())
+  if (web_contents()) {
+    api_web_contents_->RemoveObserver(this);
     Cleanup();
+  }
 }
 
 void BrowserWindow::OnInputEvent(const blink::WebInputEvent& event) {
