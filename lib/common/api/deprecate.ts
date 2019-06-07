@@ -1,3 +1,5 @@
+const { deprecateNative } = process.electronBinding('deprecate')
+
 let deprecationHandler: ElectronInternal.DeprecationHandler | null = null
 
 function warnOnce (oldName: string, newName?: string) {
@@ -20,6 +22,11 @@ const deprecate: ElectronInternal.DeprecationUtil = {
   warn: (oldName, newName) => {
     if (!process.noDeprecation) {
       deprecate.log(`'${oldName}' is deprecated. Use '${newName}' instead.`)
+    }
+  },
+  nativeWarn: (message) => {
+    if (!process.noDeprecation) {
+      deprecateNative.warn(`(electron) ${message}`)
     }
   },
   log: (message) => {

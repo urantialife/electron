@@ -75,6 +75,7 @@ declare namespace ElectronInternal {
     setHandler(handler: DeprecationHandler): void;
     getHandler(): DeprecationHandler | null;
     warn(oldName: string, newName: string): void;
+    nativeWarn(message: string): void;
     log(message: string): void;
     function(fn: Function, newName: string): Function;
     event(emitter: NodeJS.EventEmitter, oldName: string, newName: string): void;

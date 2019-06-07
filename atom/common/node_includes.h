@@ -66,6 +66,7 @@
 #include "node_internals.h"
 #include "node_options.h"
 #include "node_platform.h"
+#include "node_process.h"
 
 // Alternative to NODE_MODULE_CONTEXT_AWARE_X.
 // Allows to explicitly register builtin modules instead of using
